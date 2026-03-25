@@ -9,7 +9,7 @@ import Foundation
 
 enum APIError: LocalizedError {
     case invalidResponse
-    case decodingFailed
+    case decodingFailed(Error)
     case network(Error)
     case emptyData
 
@@ -17,8 +17,8 @@ enum APIError: LocalizedError {
         switch self {
         case .invalidResponse:
             return "Invalid server response"
-        case .decodingFailed:
-            return "Failed to parse data"
+        case .decodingFailed(let error):
+            return error.localizedDescription
         case .network(let error):
             return error.localizedDescription
         case .emptyData:
@@ -57,8 +57,9 @@ final class StockAPIClient: StockAPIClientProtocol {
             do {
                 let decoded = try JSONDecoder().decode(T.self, from: data)
                 return .success(decoded)
-            } catch {
-                return .failure(.decodingFailed)
+            } catch let error {
+                print(error.localizedDescription)
+                return .failure(.decodingFailed(error))
             }
             
         } catch {

@@ -10,22 +10,66 @@ import XCTest
 @testable import StocksApp
 
 @MainActor
-final class StockListViewModelTests : XCTestCase {
+final class StockListViewModelTests: XCTestCase {
 
-    func testFetchStocks() async {
-        let vm =  StockListViewModel(repository: StockManagerMock())
+    var viewModel: StockListViewModel!
+    var mockManager: MockStockManager!
 
-        await vm.fetchStocks()
-
-        XCTAssertEqual(vm.stocks.count, 1)
+    override func setUp() {
+        super.setUp()
+        mockManager = MockStockManager()
+        viewModel = StockListViewModel(repository: mockManager)
     }
 
-    func testSearch() async {
-        let vm =  StockListViewModel(repository: StockManagerMock())
+    override func tearDown() {
+        viewModel = nil
+        mockManager = nil
+        super.tearDown()
+    }
 
-        await vm.fetchStocks()
-        vm.searchText = "apple"
+    func testFetchStocks_Data() async {
+        
+        await viewModel.fetchStocks()
 
-        XCTAssertEqual(vm.filteredStocks.count, 1)
+        XCTAssertEqual(viewModel.stocks.count, 2)
+        XCTAssertEqual(viewModel.stocks.first?.symbol, "ES=F")
+        XCTAssertEqual(viewModel.stocks.first?.name, "S&P Futures")
+        XCTAssertEqual(viewModel.stocks.first?.price, 46782.0)
+        XCTAssertEqual(viewModel.stocks.first?.changePercent, 10.0)
+    }
+    
+
+    func testFetchStocks_Success() async {
+        
+        await viewModel.fetchStocks()
+
+        XCTAssertEqual(viewModel.stocks.count, 2)
+        XCTAssertFalse(viewModel.isLoading)
+        XCTAssertNil(viewModel.errorMessage)
+    }
+
+
+    func testFetchStocks_Failure() async {
+        
+        mockManager.shouldReturnError = true
+
+        await viewModel.fetchStocks()
+
+        XCTAssertTrue(viewModel.stocks.isEmpty)
+        XCTAssertEqual(viewModel.errorMessage, "Failed to fetch stocks. Please try again.")
+    }
+
+
+
+    func testFilteredStocks_WithSearchText() async {
+        
+        await viewModel.fetchStocks()
+       
+        viewModel.searchText = "Dow"
+
+        let result = viewModel.filteredStocks
+
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result.first?.name, "Dow Futures")
     }
 }
