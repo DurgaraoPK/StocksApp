@@ -40,16 +40,3 @@ extension APIEndPoint {
         )
     }
 }
-
-
-struct FinHubAPIEndPoint {
-    let url: URL
-
-    static func quote(symbol: String, apiKey: String) -> FinHubAPIEndPoint {
-        FinHubAPIEndPoint(
-            url: URL(string:
-                "https://finnhub.io/api/v1/quote?symbol=\(symbol)&token=\(apiKey)"
-            )!
-        )
-    }
-}

@@ -13,13 +13,3 @@ struct StockDetailsModel: Decodable {
     let marketCap: Double?
     let peRatio: Double?
 }
-
-
-struct FinnhubQuote: Decodable {
-    let c: Double  // current price
-    let dp: Double // change percent
-}
-
-struct FinnhubProfile: Decodable {
-    let name: String?
-}

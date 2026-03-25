@@ -9,27 +9,34 @@ import Foundation
 
 @MainActor
 final class StockDetailViewModel: ObservableObject {
-
+    
     @Published var detail: StockDetailsModel?
-
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+    
     private let repository: StockManagerProtocol
     private let symbol: String
-
+    
     init(repository: StockManagerProtocol, symbol: String) {
         self.repository = repository
         self.symbol = symbol
     }
-
+    
     func fetchDetails() async {
-        do {
+        isLoading = true
+        errorMessage = nil
+        
+        let result = await repository.getStockDetail(symbol: symbol)
+        
+        switch result {
+        case .success(let stockDetails):
+            detail = stockDetails
             
-            //detail = try await repository.getStockDetail(symbol: symbol)
-            
-            //Since the Rapid API's are not working temporarly calling the FinHub API's
-            
-            detail = try await repository.fetchStockDetail(symbol: symbol)
-        } catch {
-            print(error)
+        case .failure(let error):
+            detail = nil
+            errorMessage = error.localizedDescription
         }
+        
+        isLoading = false
     }
 }
