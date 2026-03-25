@@ -41,22 +41,16 @@ A simple iOS application that displays stock market data including a list of sto
 
 ##  API
 
-Due to issues with the originally provided RapidAPI endpoint (unavailable at the time of development), this project uses:
 
-- **Finnhub API** (free stock market API)
-
-### APIs Used:
-- `/quote` → Get stock price and change %
-- `/stock/profile2` → Get company details
-- `/stock/symbol` → Get list of stock symbols
+- "/market/v2/get-summary"
+- "/stock/v2/get-summary"
 
 ---
 
 ##  Limitations
 
-- Only a limited set of stocks are displayed (due to API constraints)
-- No pagination support from API
-- Market cap / P/E ratio not available in free tier
-- Symbol list is partially restricted for performance
+-  I didn't get proper response or Json body when i hit the /stock/v2/get-summary API and getting this below error 
 
+  " data couldn’t be read because it isn’t in the correct format. "
+ 
 ---
